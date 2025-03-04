@@ -67,6 +67,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### ❤️ Contributions
 Feel free to contribute! Open a pull request or an issue if you have improvements or bug fixes.
+#### Features need to contribute
+- Detection image is avatar or not if `data-is-avatar="true"`
+- Detection image is signature or not if `data-is-sign="true"`
 
 ### 📧 Contact
 For questions or suggestions, reach out to me via GitHub Issues. 😊<br/>
