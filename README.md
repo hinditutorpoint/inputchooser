@@ -20,7 +20,7 @@ Just include the **InputChooser.js** file in your project.
 ```
 ### Using CDN
 ```html
-<script src="https://cdn.jsdelivr.net/gh/hinditutorpoint/inputchooser@latest/InputChooser.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/hinditutorpoint/inputchooser@latest/InputChooser.min.js"></script>
 ```
 
 ### 🚀 Usage
