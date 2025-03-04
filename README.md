@@ -14,9 +14,13 @@
 ## 📥 Installation
 Just include the **InputChooser.js** file in your project.
 
-### Using CDN:
+### Using File:
 ```html
 <script src="path/to/InputChooser.js"></script>
+```
+### Using CDN
+```html
+<script src="https://cdn.jsdelivr.net/gh/hinditutorpoint/inputchooser@latest/InputChooser.js"></script>
 ```
 
 ### 🚀 Usage
