@@ -47,6 +47,21 @@ Simply add a `.dropzone-area` div in your HTML:
 document.addEventListener("DOMContentLoaded", function() {
     new InputChooser(".dropzone-area");
 });
+
+// Example initialization with options
+document.addEventListener("DOMContentLoaded", function() {
+    new InputChooser(".dropzone-area", {
+        maxFiles: 5,
+        multiSelect: true
+    });
+});
+
+// Initialize with custom extensions via JavaScript
+new InputChooser(".dropzone-area", {
+    maxFiles: 5,
+    multiSelect: true,
+    customExtensions: ['.psd', '.ai', 'eps'] // Both formats supported
+});
 ```
 ## ⚙️ Features in Detail
 ### ✅ Auto-injected Styles

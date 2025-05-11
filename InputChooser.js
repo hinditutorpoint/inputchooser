@@ -1,12 +1,19 @@
 /* 
     * @author: https://github.com/hinditutorpoint
+    * @enhanced-by: [Rajesh Kumar Dhuriya]
     * @license: MIT
-    * @version: 1.0.0
-    * @description: InputChooser is a lightweight JavaScript plugin that enables a drag & drop file upload experience with a built-in file preview and delete option. No external dependencies required!
+    * @version: v1.0.1
+    * @description: InputChooser is a lightweight JavaScript plugin that enables a drag & drop file upload experience with preview support for multiple file types (images, audio, video, documents, archives).
 */
 class InputChooser {
-    constructor(selector) {
+    constructor(selector, options = {}) {
         this.dropzones = document.querySelectorAll(selector);
+        this.options = {
+            maxFiles: options.maxFiles || 1,
+            multiSelect: options.multiSelect || false,
+            customExtensions: options.customExtensions || [],
+            ...options
+        };
         this.injectStyles();
         if (this.dropzones.length > 0) {
             this.init();
@@ -20,77 +27,230 @@ class InputChooser {
         style.id = "input-chooser-styles";
         style.innerHTML = `
             .dropzone-area {
-                border: 2px dashed #ccc;
-                padding: 20px;
+                border: 2px dashed #d1d5db;
+                padding: 2rem;
                 text-align: center;
                 cursor: pointer;
                 position: relative;
                 width: 100%;
-                max-width: 350px;
-                margin: 10px auto;
-                border-radius: 10px;
-                transition: 0.3s;
+                max-width: 600px;
+                margin: 1rem auto;
+                border-radius: 0.5rem;
+                transition: all 0.3s ease;
+                background-color: #f9fafb;
             }
             .dropzone-area:hover {
-                border-color: blue;
+                border-color: #3b82f6;
+                background-color: #f0f7ff;
             }
             .dropzone-area.drag-over {
-                border-color: blue;
-                background-color: rgba(0, 0, 255, 0.1);
+                border-color: #3b82f6;
+                background-color: #ebf5ff;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            }
+            .dropzone-area .dropzone-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            .dropzone-area .dropzone-icon {
+                font-size: 2.5rem;
+                color: #3b82f6;
+                margin-bottom: 0.5rem;
+            }
+            .dropzone-area .dropzone-text {
+                color: #4b5563;
+                font-size: 1rem;
+                margin: 0;
+            }
+            .dropzone-area .dropzone-hint {
+                color: #6b7280;
+                font-size: 0.875rem;
+                margin: 0;
+            }
+            .dropzone-area .dropzone-button {
+                color: #3b82f6;
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 0.875rem;
+                text-decoration: underline;
+                margin-top: 0.5rem;
             }
             .hidden-input {
                 display: none;
             }
             .preview-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                margin-top: 1.5rem;
+                width: 100%;
+            }
+            .preview-item {
                 position: relative;
-                display: inline-block;
-                margin-top: 10px;
-                max-width: 100%;
+                border: 1px solid #e5e7eb;
+                border-radius: 0.375rem;
+                padding: 0.75rem;
+                background: white;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                width: calc(33.333% - 1rem);
+                min-width: 120px;
+                transition: all 0.2s ease;
             }
-            .preview-image {
-                max-width: 100%;
-                height: auto;
-                display: none;
-                border: 1px solid #ddd;
-                padding: 5px;
-                border-radius: 5px;
+            .preview-item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             }
-            .error-message {
-                color: red;
-                margin-top: 5px;
-                font-size: 14px;
+            .preview-thumbnail {
+                width: 100%;
+                height: 100px;
+                object-fit: contain;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 0.5rem;
+                overflow: hidden;
+            }
+            .preview-thumbnail img {
+                max-width: 100%;
+                max-height: 100%;
+            }
+            .preview-thumbnail .file-icon {
+                font-size: 2.5rem;
+                color: #6b7280;
+            }
+            .preview-info {
+                text-align: center;
+                font-size: 0.75rem;
+                color: #4b5563;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .preview-info .file-name {
+                font-weight: 500;
+                margin-bottom: 0.25rem;
+            }
+            .preview-info .file-size {
+                color: #6b7280;
             }
             .clear-button {
-                display: none;
                 position: absolute;
-                top: -10px;
-                right: -10px;
-                background: red;
+                top: -0.5rem;
+                right: -0.5rem;
+                background: #ef4444;
                 color: white;
                 border: none;
-                cursor: pointer;
-                font-size: 14px;
-                padding: 6px;
-                width: 24px;
-                height: 24px;
                 border-radius: 50%;
-                text-align: center;
-                line-height: 12px;
-                box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+                width: 1.5rem;
+                height: 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 0.875rem;
+                line-height: 1;
+                padding: 0;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+                transition: all 0.2s ease;
             }
             .clear-button:hover {
-                background: darkred;
+                background: #dc2626;
+                transform: scale(1.1);
+            }
+            .error-message {
+                color: #ef4444;
+                margin-top: 0.5rem;
+                font-size: 0.875rem;
+                text-align: center;
+            }
+            .progress-container {
+                width: 100%;
+                background-color: #e5e7eb;
+                border-radius: 0.25rem;
+                margin-top: 0.5rem;
+                overflow: hidden;
+                display: none;
+            }
+            .progress-bar {
+                height: 0.5rem;
+                background-color: #3b82f6;
+                width: 0%;
+                transition: width 0.3s ease;
+            }
+            @media (max-width: 640px) {
+                .preview-item {
+                    width: calc(50% - 1rem);
+                }
             }
         `;
         document.head.appendChild(style);
     }
 
+    getFileIcon(type) {
+        const icons = {
+            // Images
+            'image/': '🖼️',
+            // Documents
+            'application/pdf': '📄',
+            'application/msword': '📝',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '📝',
+            'application/vnd.ms-excel': '📊',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '📊',
+            'application/vnd.ms-powerpoint': '📑',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation': '📑',
+            'text/plain': '📄',
+            'text/csv': '📊',
+            // Archives
+            'application/zip': '🗄️',
+            'application/x-rar-compressed': '🗄️',
+            'application/x-7z-compressed': '🗄️',
+            'application/x-tar': '🗄️',
+            'application/x-gzip': '🗄️',
+            // Audio
+            'audio/': '🎵',
+            // Video
+            'video/': '🎬',
+            // Default
+            'default': '📁'
+        };
+
+        for (const [key, value] of Object.entries(icons)) {
+            if (type.startsWith(key)) {
+                return value;
+            }
+        }
+
+        return icons.default;
+    }
+
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
     init() {
         this.dropzones.forEach(dropzone => {
+            // Initialize dropzone content
             if (dropzone.innerHTML.trim() === "") {
                 dropzone.innerHTML = `
-                    <p>Drag & drop your file here or</p>
-                    <span style="color: blue; text-decoration: underline;">click to upload</span>
+                    <div class="dropzone-content">
+                        <div class="dropzone-icon">📁</div>
+                        <p class="dropzone-text">Drag & drop files here</p>
+                        <p class="dropzone-hint">or</p>
+                        <button type="button" class="dropzone-button">Browse files</button>
+                    </div>
+                    <div class="preview-container"></div>
+                    <div class="error-message"></div>
+                    <div class="progress-container">
+                        <div class="progress-bar"></div>
+                    </div>
                 `;
             }
 
@@ -101,6 +261,9 @@ class InputChooser {
                 input.type = "file";
                 input.classList.add("hidden-input");
                 input.name = inputName;
+                if (this.options.multiSelect) {
+                    input.multiple = true;
+                }
                 dropzone.appendChild(input);
             }
 
@@ -118,47 +281,42 @@ class InputChooser {
                 dropzone.appendChild(previewContainer);
             }
 
-            let previewImage = dropzone.querySelector(".preview-image");
-            if (!previewImage) {
-                previewImage = document.createElement("img");
-                previewImage.classList.add("preview-image");
-                previewContainer.appendChild(previewImage);
+            let progressContainer = dropzone.querySelector(".progress-container");
+            if (!progressContainer) {
+                progressContainer = document.createElement("div");
+                progressContainer.classList.add("progress-container");
+                const progressBar = document.createElement("div");
+                progressBar.classList.add("progress-bar");
+                progressContainer.appendChild(progressBar);
+                dropzone.appendChild(progressContainer);
             }
 
-            let clearButton = dropzone.querySelector(".clear-button");
-            if (!clearButton) {
-                clearButton = document.createElement("button");
-                clearButton.type = "button";
-                clearButton.classList.add("clear-button");
-                clearButton.innerHTML = "×";
-                previewContainer.appendChild(clearButton);
-                
-                // Prevent clicking the dropzone when clicking the delete button
-                clearButton.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    previewImage.style.display = "none";
-                    input.value = "";
-                    clearButton.style.display = "none";
-                });
-            }
+            const allowedTypes = dropzone.dataset.type ? 
+                dropzone.dataset.type.split(",").map(t => t.trim()) : 
+                ['image/*', 'audio/*', 'video/*', 'application/pdf', 
+                 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                 'application/zip', 'application/x-rar-compressed'];
+            
+            const maxSize = dropzone.dataset.size ? parseInt(dropzone.dataset.size) * 1024 : 10 * 1024 * 1024; // 10MB default
 
-            const allowedTypes = (dropzone.dataset.type || "png,jpeg").split(",").map(type => `image/${type}`);
-            const maxSize = (dropzone.dataset.size || 2000) * 1024;
-            const maxWidth = dropzone.dataset.width || 500;
-            const maxHeight = dropzone.dataset.height || 500;
-
+            // Click handler
             dropzone.addEventListener("click", (e) => {
-                if (!e.target.classList.contains("clear-button")) {
+                if (!e.target.classList.contains("clear-button") && 
+                    !e.target.classList.contains("preview-item") &&
+                    !e.target.closest(".preview-item")) {
                     input.click();
                 }
             });
 
-            input.addEventListener("change", function () {
-                if (this.files.length > 0) {
-                    InputChooser.handleFile(this.files[0], previewImage, errorMsg, clearButton, { allowedTypes, maxSize, maxWidth, maxHeight });
+            // Input change handler
+            input.addEventListener("change", () => {
+                if (input.files.length > 0) {
+                    this.handleFiles(input.files, dropzone, previewContainer, errorMsg, { allowedTypes, maxSize });
                 }
             });
 
+            // Drag and drop handlers
             dropzone.addEventListener("dragover", (e) => {
                 e.preventDefault();
                 dropzone.classList.add("drag-over");
@@ -173,56 +331,162 @@ class InputChooser {
                 dropzone.classList.remove("drag-over");
 
                 if (e.dataTransfer.files.length > 0) {
-                    const file = e.dataTransfer.files[0];
                     input.files = e.dataTransfer.files;
-                    InputChooser.handleFile(file, previewImage, errorMsg, clearButton, { allowedTypes, maxSize, maxWidth, maxHeight });
+                    this.handleFiles(e.dataTransfer.files, dropzone, previewContainer, errorMsg, { allowedTypes, maxSize });
                 }
             });
         });
     }
 
-    static handleFile(file, previewImage, errorMsg, clearButton, options) {
-        InputChooser.validateFile(file, options)
-            .then(() => {
-                errorMsg.textContent = "";
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    previewImage.src = e.target.result;
-                    previewImage.style.display = "block";
-                    clearButton.style.display = "block";
-                };
-                reader.readAsDataURL(file);
-            })
-            .catch(error => {
-                errorMsg.textContent = error;
-                previewImage.style.display = "none";
-                clearButton.style.display = "none";
-            });
+    handleFiles(files, dropzone, previewContainer, errorMsg, options) {
+        errorMsg.textContent = "";
+        
+        // Check if we're exceeding max files
+        if (this.options.maxFiles > 0 && files.length > this.options.maxFiles) {
+            errorMsg.textContent = `Maximum ${this.options.maxFiles} file(s) allowed.`;
+            return;
+        }
+
+        // Clear existing previews if not multi-select
+        if (!this.options.multiSelect) {
+            previewContainer.innerHTML = '';
+        }
+
+        Array.from(files).forEach(file => {
+            this.validateFile(file, options)
+                .then(() => {
+                    this.createPreview(file, previewContainer);
+                })
+                .catch(error => {
+                    errorMsg.textContent = error;
+                });
+        });
     }
 
-    static validateFile(file, { allowedTypes, maxSize, maxWidth, maxHeight }) {
+    createPreview(file, previewContainer) {
+        const previewItem = document.createElement("div");
+        previewItem.classList.add("preview-item");
+        
+        const previewThumbnail = document.createElement("div");
+        previewThumbnail.classList.add("preview-thumbnail");
+        
+        const previewInfo = document.createElement("div");
+        previewInfo.classList.add("preview-info");
+        
+        const fileName = document.createElement("div");
+        fileName.classList.add("file-name");
+        fileName.textContent = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+        
+        const fileSize = document.createElement("div");
+        fileSize.classList.add("file-size");
+        fileSize.textContent = this.formatFileSize(file.size);
+        
+        const clearButton = document.createElement("button");
+        clearButton.type = "button";
+        clearButton.classList.add("clear-button");
+        clearButton.innerHTML = "×";
+        clearButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            previewItem.remove();
+        });
+        
+        previewInfo.appendChild(fileName);
+        previewInfo.appendChild(fileSize);
+        previewItem.appendChild(previewThumbnail);
+        previewItem.appendChild(previewInfo);
+        previewItem.appendChild(clearButton);
+        
+        // Handle different file types
+        if (file.type.startsWith("image/")) {
+            const img = document.createElement("img");
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                img.src = e.target.result;
+                previewThumbnail.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        } else if (file.type.startsWith("video/")) {
+            const video = document.createElement("video");
+            video.controls = true;
+            video.muted = true;
+            video.src = URL.createObjectURL(file);
+            video.style.maxHeight = "100%";
+            video.style.maxWidth = "100%";
+            previewThumbnail.appendChild(video);
+        } else if (file.type.startsWith("audio/")) {
+            const audio = document.createElement("audio");
+            audio.controls = true;
+            audio.src = URL.createObjectURL(file);
+            previewThumbnail.appendChild(audio);
+        } else {
+            const icon = document.createElement("div");
+            icon.classList.add("file-icon");
+            icon.textContent = this.getFileIcon(file.type);
+            previewThumbnail.appendChild(icon);
+        }
+        
+        previewContainer.appendChild(previewItem);
+    }
+
+    validateFile(file, { allowedTypes, maxSize }) {
         return new Promise((resolve, reject) => {
-            if (!allowedTypes.includes(file.type)) {
-                return reject(`Invalid file type. Allowed: ${allowedTypes.join(", ").replace(/image\//g, "")}`);
-            }
+            // Check file size first (quick check)
             if (file.size > maxSize) {
-                return reject(`File size exceeds ${maxSize / 1024}KB.`);
+                return reject(`File size exceeds ${this.formatFileSize(maxSize)}`);
             }
 
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
-            img.onload = function () {
-                if (img.width > maxWidth || img.height > maxHeight) {
-                    return reject(`Image dimensions should be ${maxWidth}x${maxHeight} or smaller.`);
+            // Get file extension
+            const fileExt = file.name.split('.').pop().toLowerCase();
+            
+            // Check against custom extensions if provided
+            if (this.options.customExtensions.length > 0) {
+                const isCustomAllowed = this.options.customExtensions.some(ext => {
+                    // Support both ".ext" and "ext" format
+                    const cleanExt = ext.startsWith('.') ? ext.substring(1) : ext;
+                    return fileExt === cleanExt.toLowerCase();
+                });
+
+                if (isCustomAllowed) {
+                    return resolve(); // Bypass MIME type check for custom extensions
                 }
-                resolve();
-            };
+            }
+
+            // Check MIME type against allowed types
+            let typeMatch = false;
+            for (const type of allowedTypes) {
+                if (type.endsWith('/*')) {
+                    // Wildcard matching (e.g., image/*)
+                    if (file.type.startsWith(type.replace('/*', '/'))) {
+                        typeMatch = true;
+                        break;
+                    }
+                } else if (file.type === type) {
+                    typeMatch = true;
+                    break;
+                } else if (type.startsWith('.')) {
+                    // Extension-based matching (e.g., .psd)
+                    const ext = type.substring(1);
+                    if (fileExt === ext.toLowerCase()) {
+                        typeMatch = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!typeMatch) {
+                return reject(`File type not allowed. Allowed types: ${allowedTypes.join(', ')}${this.options.customExtensions.length > 0 ? ' or extensions: ' + this.options.customExtensions.join(', ') : ''}`);
+            }
+            
+            resolve();
+        });
+    }
+
+    uploadFiles(url, options = {}) {
+        return new Promise((resolve, reject) => {
+            // This would be implemented based on your backend requirements
+            // You would typically use XMLHttpRequest or fetch API here
+            console.log("Upload functionality would be implemented here");
+            resolve();
         });
     }
 }
-
-/* // Initialize on document ready
-document.addEventListener("DOMContentLoaded", function() {
-    new InputChooser(".dropzone-area");
-});
- */
