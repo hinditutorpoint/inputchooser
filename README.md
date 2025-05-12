@@ -29,9 +29,21 @@ Simply add a `.dropzone-area` div in your HTML:
 <div class="dropzone-area" 
     data-name="cashier" 
     data-size="100" 
-    data-type="png,jpeg,gif" 
+    data-type="image/*,video/*" 
     data-width="500" 
     data-height="500">
+</div>
+```
+Customize the helper text, file type, and more using the attributes.
+```html
+<div class="dropzone-area" 
+    data-name="logo" 
+    data-size="100" 
+    data-type="image/*" 
+    data-width="500" 
+    data-height="500">
+    <p>Drag & drop your logo file here or</p>
+    <span style="color: blue; text-decoration: underline;">click to upload</span>
 </div>
 ```
 
