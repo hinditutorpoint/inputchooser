@@ -96,13 +96,15 @@ class InputChooser {
                 padding: 0.75rem;
                 background: white;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                width: calc(33.333% - 1rem);
-                min-width: 120px;
                 transition: all 0.2s ease;
+                flex: 1 1 calc(33.333% - 1rem);
+                min-width: 120px;
+                max-width: 100%;
+                box-sizing: border-box;
             }
-            .preview-item:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            .preview-container.single-item .preview-item,
+            .preview-container:has(.preview-item:only-child) .preview-item {
+                flex: 1 1 100%;
             }
             .preview-thumbnail {
                 width: 100%;
@@ -183,7 +185,11 @@ class InputChooser {
             }
             @media (max-width: 640px) {
                 .preview-item {
-                    width: calc(50% - 1rem);
+                    flex: 1 1 calc(50% - 1rem);
+                }
+                .preview-container.single-item .preview-item,
+                .preview-container:has(.preview-item:only-child) .preview-item {
+                    flex: 1 1 100%;
                 }
             }
         `;
@@ -341,13 +347,11 @@ class InputChooser {
     handleFiles(files, dropzone, previewContainer, errorMsg, options) {
         errorMsg.textContent = "";
         
-        // Check if we're exceeding max files
         if (this.options.maxFiles > 0 && files.length > this.options.maxFiles) {
             errorMsg.textContent = `Maximum ${this.options.maxFiles} file(s) allowed.`;
             return;
         }
 
-        // Clear existing previews if not multi-select
         if (!this.options.multiSelect) {
             previewContainer.innerHTML = '';
         }
@@ -356,6 +360,7 @@ class InputChooser {
             this.validateFile(file, options)
                 .then(() => {
                     this.createPreview(file, previewContainer);
+                    this.updatePreviewLayout(previewContainer);
                 })
                 .catch(error => {
                     errorMsg.textContent = error;
@@ -388,6 +393,7 @@ class InputChooser {
         clearButton.addEventListener("click", (e) => {
             e.stopPropagation();
             previewItem.remove();
+            this.updatePreviewLayout(previewContainer);
         });
         
         previewInfo.appendChild(fileName);
@@ -396,7 +402,6 @@ class InputChooser {
         previewItem.appendChild(previewInfo);
         previewItem.appendChild(clearButton);
         
-        // Handle different file types
         if (file.type.startsWith("image/")) {
             const img = document.createElement("img");
             const reader = new FileReader();
@@ -426,6 +431,11 @@ class InputChooser {
         }
         
         previewContainer.appendChild(previewItem);
+    }
+
+    updatePreviewLayout(previewContainer) {
+        const previewItems = previewContainer.querySelectorAll('.preview-item');
+        previewContainer.classList.toggle('single-item', previewItems.length === 1);
     }
 
     validateFile(file, { allowedTypes, maxSize }) {

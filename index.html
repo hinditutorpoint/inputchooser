@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InputChooser - Drag & Drop File Upload Plugin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Highlight.js for code syntax -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <style>
+        .documentation-section {
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #0d6efd;
+        }
+        .example-container {
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            background-color: white;
+        }
+        .nav-tabs .nav-link.active {
+            font-weight: 600;
+        }
+        .attribute-table th {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <header class="text-center mb-5">
+            <h1 class="display-4 fw-bold mb-3">InputChooser</h1>
+            <p class="lead">Lightweight JavaScript plugin for drag & drop file uploads with preview support</p>
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                <a href="#installation" class="btn btn-primary btn-lg px-4">Get Started</a>
+                <a href="#examples" class="btn btn-outline-secondary btn-lg px-4">Examples</a>
+            </div>
+        </header>
+
+        <div class="row mb-5">
+            <div class="col-md-10 mx-auto text-center">
+                <div class="alert alert-info">
+                    <strong>v1.0.1</strong> - Now with improved responsive previews and better mobile support
+                </div>
+            </div>
+        </div>
+
+        <section id="features" class="documentation-section">
+            <h2 class="text-center mb-4">✨ Key Features</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="text-center p-3 h-100">
+                        <div class="feature-icon">📂</div>
+                        <h4>Drag & Drop</h4>
+                        <p>Intuitive drag and drop interface with visual feedback</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-3 h-100">
+                        <div class="feature-icon">📸</div>
+                        <h4>File Previews</h4>
+                        <p>Preview images, videos, and documents before upload</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-3 h-100">
+                        <div class="feature-icon">🛠️</div>
+                        <h4>Customizable</h4>
+                        <p>Control file types, sizes, and dimensions with data attributes</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-3 h-100">
+                        <div class="feature-icon">📱</div>
+                        <h4>Responsive</h4>
+                        <p>Works perfectly on all device sizes</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-3 h-100">
+                        <div class="feature-icon">⚡</div>
+                        <h4>Lightweight</h4>
+                        <p>No dependencies - just 12KB minified</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-3 h-100">
+                        <div class="feature-icon">🎨</div>
+                        <h4>Auto-styled</h4>
+                        <p>No separate CSS required</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="installation" class="documentation-section">
+            <h2 class="mb-4">📥 Installation</h2>
+            
+            <div class="mb-4">
+                <h4>Using CDN</h4>
+                <pre><code class="language-html">&lt;script src="https://cdn.jsdelivr.net/gh/hinditutorpoint/inputchooser@latest/InputChooser.min.js"&gt;&lt;/script&gt;</code></pre>
+            </div>
+            
+            <div class="mb-4">
+                <h4>Using NPM</h4>
+                <pre><code class="language-bash">npm install inputchooser</code></pre>
+            </div>
+            
+            <div>
+                <h4>Manual Download</h4>
+                <p>Download the <a href="https://github.com/hinditutorpoint/inputchooser/releases" target="_blank">latest release</a> and include the script:</p>
+                <pre><code class="language-html">&lt;script src="path/to/InputChooser.js"&gt;&lt;/script&gt;</code></pre>
+            </div>
+        </section>
+
+        <section id="usage" class="documentation-section">
+            <h2 class="mb-4">🚀 Basic Usage</h2>
+            
+            <div class="mb-4">
+                <h4>HTML Setup</h4>
+                <pre><code class="language-html">&lt;div class="dropzone-area" 
+    data-name="file_upload" 
+    data-size="1024" 
+    data-type="image/*"&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+            
+            <div class="mb-4">
+                <h4>JavaScript Initialization</h4>
+                <pre><code class="language-javascript">document.addEventListener("DOMContentLoaded", function() {
+    new InputChooser(".dropzone-area");
+});</code></pre>
+            </div>
+            
+            <div class="example-container">
+                <h5 class="mb-3">Live Example</h5>
+                <div class="dropzone-area" 
+                    data-name="example1" 
+                    data-size="500" 
+                    data-type="image/*">
+                </div>
+            </div>
+        </section>
+
+        <section id="configuration" class="documentation-section">
+            <h2 class="mb-4">⚙️ Configuration Options</h2>
+            
+            <div class="mb-4">
+                <h4>HTML Data Attributes</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered attribute-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Attribute</th>
+                                <th>Description</th>
+                                <th>Default</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>data-name</code></td>
+                                <td>Input name attribute for form submission</td>
+                                <td><em>Required</em></td>
+                                <td><code>data-name="profile_image"</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>data-size</code></td>
+                                <td>Maximum file size in KB</td>
+                                <td>10240 (10MB)</td>
+                                <td><code>data-size="2048"</code> (2MB)</td>
+                            </tr>
+                            <tr>
+                                <td><code>data-type</code></td>
+                                <td>Allowed file types (MIME types or extensions)</td>
+                                <td>Common file types</td>
+                                <td><code>data-type="image/*,.pdf,.docx"</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>data-width</code></td>
+                                <td>Maximum image width in pixels</td>
+                                <td>None</td>
+                                <td><code>data-width="800"</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>data-height</code></td>
+                                <td>Maximum image height in pixels</td>
+                                <td>None</td>
+                                <td><code>data-height="600"</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <h4>JavaScript Options</h4>
+                <pre><code class="language-javascript">new InputChooser(".dropzone-area", {
+    maxFiles: 5,          // Maximum number of files allowed
+    multiSelect: true,     // Allow multiple file selection
+    customExtensions: ['.psd', '.ai']  // Additional file extensions to accept
+});</code></pre>
+            </div>
+        </section>
+
+        <section id="examples" class="documentation-section">
+            <h2 class="mb-4">🎨 Examples</h2>
+            
+            <ul class="nav nav-tabs mb-3" id="examplesTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="multi-tab" data-bs-toggle="tab" data-bs-target="#multi" type="button">Multiple Files</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="custom-tab" data-bs-toggle="tab" data-bs-target="#custom" type="button">Custom Content</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="video-tab" data-bs-toggle="tab" data-bs-target="#video" type="button">Video Upload</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="examplesTabContent">
+                <div class="tab-pane fade show active" id="multi" role="tabpanel">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Code</h5>
+                            <pre><code class="language-html">&lt;div class="dropzone-area" 
+    data-name="multiple_files" 
+    data-size="5120" 
+    data-type="image/*,.pdf,.docx"&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    new InputChooser(".dropzone-area", {
+        maxFiles: 5,
+        multiSelect: true
+    });
+&lt;/script&gt;</code></pre>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Result</h5>
+                            <div class="dropzone-area" 
+                                data-name="multiple_files" 
+                                data-size="5120" 
+                                data-type="image/*,.pdf,.docx">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="custom" role="tabpanel">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Code</h5>
+                            <pre><code class="language-html">&lt;div class="dropzone-area" 
+    data-name="custom_content" 
+    data-type="image/*"&gt;
+    &lt;div class="dropzone-content"&gt;
+        &lt;div class="dropzone-icon"&gt;📁&lt;/div&gt;
+        &lt;p class="dropzone-text"&gt;Upload your profile picture&lt;/p&gt;
+        &lt;button type="button" class="btn btn-primary mt-2"&gt;Select File&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Result</h5>
+                            <div class="dropzone-area" 
+                                data-name="custom_content" 
+                                data-type="image/*">
+                                <div class="dropzone-content">
+                                    <div class="dropzone-icon">📁</div>
+                                    <p class="dropzone-text">Upload your profile picture</p>
+                                    <button type="button" class="btn btn-primary mt-2">Select File</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="video" role="tabpanel">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Code</h5>
+                            <pre><code class="language-html">&lt;div class="dropzone-area" 
+    data-name="video_upload" 
+    data-size="10240" 
+    data-type="video/*"&gt;
+    &lt;p&gt;Upload your video (max 10MB)&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Result</h5>
+                            <div class="dropzone-area" 
+                                data-name="video_upload" 
+                                data-size="10240" 
+                                data-type="video/*">
+                                <p>Upload your video (max 10MB)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="license" class="documentation-section">
+            <h2 class="mb-4">📜 License & Credits</h2>
+            <p>InputChooser is open-source software licensed under the <strong>MIT License</strong>.</p>
+            <p>Created by <a href="https://github.com/hinditutorpoint" target="_blank">Rajesh Kumar Dhuriya</a></p>
+            
+            <h4 class="mt-4">Contributing</h4>
+            <p>We welcome contributions! Please open an issue or pull request on <a href="https://github.com/hinditutorpoint/inputchooser" target="_blank">GitHub</a>.</p>
+            
+            <h4 class="mt-4">Future Features</h4>
+            <ul>
+                <li>Avatar detection when <code>data-is-avatar="true"</code></li>
+                <li>Signature detection when <code>data-is-sign="true"</code></li>
+                <li>Upload progress indicators</li>
+            </ul>
+        </section>
+    </div>
+
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">© 2023 InputChooser. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <!-- InputChooser from CDN -->
+    <script src="https://cdn.jsdelivr.net/gh/hinditutorpoint/inputchooser@latest/InputChooser.min.js"></script>
+    
+    <script>
+        // Initialize syntax highlighting
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+            });
+            
+            // Initialize all dropzone examples
+            new InputChooser(".dropzone-area[data-name='example1']");
+            new InputChooser(".dropzone-area[data-name='multiple_files']", {
+                maxFiles: 5,
+                multiSelect: true
+            });
+            new InputChooser(".dropzone-area[data-name='custom_content']");
+            new InputChooser(".dropzone-area[data-name='video_upload']");
+        });
+    </script>
+</body>
+</html>
